@@ -5,9 +5,13 @@
 #include <time.h>
 #include <queue>
 #include <stdlib.h>
-	
+#include <boost\heap\fibonacci_heap.hpp>
+
+#pragma warning(disable:4996)
+
 using namespace std;
 #define roadnet
+#define boosttest
 
 #define INF 40000000
 
@@ -18,17 +22,17 @@ Dijkstra::Dijkstra(char* filename, int maxnode) {
 		exit(-1);
 	}
 	this->maxnode = maxnode;
-	this->graph = new EdgeList[maxnode+1];
+	this->graph = new EdgeList[maxnode + 1];
 	this->visit = new bool[maxnode + 1];
 	this->dist = new int[maxnode + 1];
 }
 
 Dijkstra::~Dijkstra() {
-	if(fin != NULL)fclose(fin);
+	if (fin != NULL)fclose(fin);
 	for (int i = 0; i < maxnode + 1; ++i) {
 		EdgeList* item = graph + i;
 		if (item->begin != NULL) {
-			Edge* tmp = item->begin; 
+			Edge* tmp = item->begin;
 			while (tmp != NULL) {
 				Edge* deleteEdge = tmp;
 				tmp = tmp->next;
@@ -52,14 +56,14 @@ void Dijkstra::construct_index() {
 #ifdef roadnet
 	dropHeader();
 #endif
-	
+
 	int fromNodeId, toNodeId;
 	while (fgets(buffer, 1024, fin)) {
 		sscanf(buffer, "%d%d", &fromNodeId, &toNodeId);
 
 #ifndef bike
 		Edge* newEdge = new Edge(toNodeId, 1);
-		if (graph[fromNodeId].end != NULL){
+		if (graph[fromNodeId].end != NULL) {
 			graph[fromNodeId].end->next = newEdge;
 			graph[fromNodeId].end = newEdge;
 		}
@@ -88,14 +92,14 @@ void Dijkstra::construct_index() {
 	}
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);
-	printf("the construct index time: %.6f milliseconds\n", difftime(result.tv_sec, 0)*1000+result.tv_nsec/1000000.0);
+	printf("the construct index time: %.6f milliseconds\n", difftime(result.tv_sec, 0) * 1000 + result.tv_nsec / 1000000.0);
 }
 
 void Dijkstra::create_query()
 {
 	timespec start, stop, result;
 	timespec_get(&start, TIME_UTC);
-	
+
 	int source, target;
 	srand(1);
 
@@ -103,22 +107,23 @@ void Dijkstra::create_query()
 		source = (rand() % (maxnode - 0 + 1)) + 0;
 		target = (rand() % (maxnode - 0 + 1)) + 0;
 		//answer_query(source, target);
-		printf("%d,%d:%d\n", source, target, answer_query(source, target));
+		//printf("%d,%d:%d\n", source, target, answer_query(source, target));
 	}
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);
-	printf("the average query time in 100 queries: %.6f milliseconds\n", (difftime(result.tv_sec, 0) * 1000 + result.tv_nsec / 1000000.0)/100.0);
+	printf("the average query time in 100 queries: %.6f milliseconds\n", (difftime(result.tv_sec, 0) * 1000 + result.tv_nsec / 1000000.0) / 100.0);
 }
 
 int Dijkstra::answer_query(int s, int t)
-{	
+{
 	for (int i = 0; i < maxnode + 1; ++i) {
 		visit[i] = false;
 		dist[i] = INF;
 	}
 	visit[s] = true;
 	dist[s] = 0;
-	
+
+#ifndef boosttest
 	priority_queue<HeapNode> pq;
 	HeapNode hnode = HeapNode(s, 0);
 	pq.push(hnode);
@@ -137,6 +142,26 @@ int Dijkstra::answer_query(int s, int t)
 			}
 		}
 	}
+#else
+	boost::heap::fibonacci_heap<HeapNode,boost::heap::compare<decreaseOrderHeapNode> > pq; 
+	HeapNode hnode = HeapNode(s, 0);  
+	pq.push(hnode); 
+
+	while (!pq.empty()) {
+		HeapNode top = pq.top();
+		pq.pop();
+		visit[top.idx] = true;
+		if (top.idx == t)break;
+		EdgeList elist = this->graph[top.idx];
+		for (Edge* e = elist.begin; e != NULL; e = e->next) {
+			if (!visit[e->end] && dist[top.idx] + e->weight < dist[e->end]) {
+				dist[e->end] = dist[top.idx] + e->weight;
+				HeapNode hn = HeapNode(e->end, dist[e->end]);
+				pq.push(hn);
+			}
+		}
+	}
+#endif
 	return dist[t];
 }
 

@@ -6,12 +6,12 @@ public:
 	int end;
 	int weight;
 	Edge* next;
-	Edge(int _end, int _weight) :end(_end), weight(_weight),next(NULL) {}
+	Edge(int _end, int _weight) :end(_end), weight(_weight), next(NULL) {}
 };
 
 class EdgeList {
 public:
-	Edge* begin; 
+	Edge* begin;
 	Edge* end;
 	EdgeList() {
 		begin = end = NULL;

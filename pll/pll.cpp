@@ -5,11 +5,14 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
-
-using namespace std; 
+#include <boost\heap\fibonacci_heap.hpp>
+#include <boost\container\vector.hpp>
+using namespace std;
 
 #define INF 40000000
 #define roadnet
+
+#define boosttest
 
 PLL::PLL(char* filename, int maxnode) {
 	fin = fopen(filename, "r");
@@ -71,18 +74,25 @@ void PLL::construct_index() {
 }
 
 void PLL::construct_label_in(EdgeList* g, int s, int iter) {
+#ifndef boosttest
 	vector<int> visit_idx;  //avoid o(n) time initiliazation
-
-	priority_queue<HeapNode> pq; 
-	visit[s] = true; 
-	dist[s] = 0; 
+	priority_queue<HeapNode> pq;
+#else
+	boost::heap::fibonacci_heap<HeapNode, boost::heap::compare<decreaseHeapNode> > pq;
+	boost::container::vector<int> visit_idx;
+#endif
+	//visit[s] = true;
+	dist[s] = 0;
 	HeapNode hnode = HeapNode(s, 0);
 	pq.push(hnode);
 
 	while (!pq.empty()) {
 		HeapNode top = pq.top();
-		int idx = top.idx; 
-
+		int idx = top.idx;
+		if (visit[idx]) {
+			pq.pop();
+			continue;
+		}
 		visit[idx] = true;
 		visit_idx.push_back(idx);
 		pq.pop();
@@ -99,9 +109,14 @@ void PLL::construct_label_in(EdgeList* g, int s, int iter) {
 			}
 		}
 	}
-	
+
 	//do the initializaton again
-	for (vector<int>::iterator it = visit_idx.begin(); it != visit_idx.end(); ++it) {
+#ifndef boosttest
+	vector<int>::iterator::iterator it;
+#else
+	boost::container::vector<int>::iterator it;
+#endif
+	for (it = visit_idx.begin(); it != visit_idx.end(); ++it) {
 		visit[*it] = false;
 		dist[*it] = INF;
 	}
@@ -109,9 +124,13 @@ void PLL::construct_label_in(EdgeList* g, int s, int iter) {
 
 void PLL::construct_label_out(EdgeList * g, int s, int iter)
 {
+#ifndef boosttest
 	vector<int> visit_idx;  //avoid o(n) time initiliazation
 	priority_queue<HeapNode> pq;
-	visit[s] = true;
+#else
+	boost::heap::fibonacci_heap<HeapNode, boost::heap::compare<decreaseHeapNode> > pq;
+	boost::container::vector<int> visit_idx;
+#endif
 	dist[s] = 0;
 	HeapNode hnode = HeapNode(s, 0);
 	pq.push(hnode);
@@ -119,7 +138,10 @@ void PLL::construct_label_out(EdgeList * g, int s, int iter)
 	while (!pq.empty()) {
 		HeapNode top = pq.top();
 		int idx = top.idx;
-
+		if (visit[idx]) {
+			pq.pop();
+			continue;
+		}
 		visit[idx] = true;
 		visit_idx.push_back(idx);
 		pq.pop();
@@ -138,11 +160,15 @@ void PLL::construct_label_out(EdgeList * g, int s, int iter)
 	}
 
 	//do the initializaton again
-	for (vector<int>::iterator it = visit_idx.begin(); it != visit_idx.end(); ++it) {
-		visit[*it] = false;
-		dist[*it] = INF;
-	}
-
+#ifndef boosttest
+		vector<int>::iterator::iterator it;
+#else
+		boost::container::vector<int>::iterator it;
+#endif
+		for (it = visit_idx.begin(); it != visit_idx.end(); ++it) {
+			visit[*it] = false;
+			dist[*it] = INF;
+		}
 }
 
 void PLL::construct_labels() {
@@ -157,7 +183,7 @@ void PLL::construct_labels() {
 	orderlist[7].idx = 0;
 #endif
 	for (int i = 0; i < maxnode + 1; ++i) {
-		printf("%d\n", i);
+		//printf("%d\n", i);
 		int idx = orderlist[i].idx;
 		construct_label_in(graph, idx, i);
 		construct_label_out(reverse_graph, idx, i);
@@ -209,7 +235,7 @@ void PLL::printLabel(LabelList* list) {
 	for (int i = 0; i < maxnode + 1; ++i) {
 		printf("%d: ", i);
 		if (list[i].begin != NULL) {
-			Label* tmp = list[i].begin; 
+			Label* tmp = list[i].begin;
 			while (tmp != NULL) {
 				//printf("(%d,%d), ", tmp->real_idx, tmp->value);
 				tmp = tmp->next;
@@ -262,14 +288,14 @@ void PLL::AddEdge(EdgeList * elist, int from, int to, int weight)
 	else {
 		elist[from].begin = elist[from].end = e;
 	}
-	
+
 }
 
 void PLL::deleteGraph(EdgeList *elist) {
 	for (int i = 0; i < maxnode + 1; ++i) {
 		EdgeList* item = elist + i;
 		if (item->begin != NULL) {
-			Edge* tmp = item->begin; 
+			Edge* tmp = item->begin;
 			while (tmp != NULL) {
 				Edge* e = tmp;
 				tmp = tmp->next;
@@ -295,8 +321,8 @@ PLL::~PLL() {
 	if (fin != NULL)fclose(fin);
 	deleteGraph(graph);
 	deleteGraph(reverse_graph);
-	if (visit)delete[] visit; 
-	if (used)delete[] used; 
+	if (visit)delete[] visit;
+	if (used)delete[] used;
 	if (dist)delete[]dist;
 }
 

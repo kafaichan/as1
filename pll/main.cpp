@@ -1,20 +1,23 @@
 #include <iostream>
 #include <stdio.h>
-using namespace std; 
+
+using namespace std;
 #include "pll.h"
 
 #define roadnet
 
+#pragma warning(disable:4996)
+
 #ifdef test
-	#define MAXNODE 7
+#define MAXNODE 7
 #endif 
 
 #ifdef roadnet
-	#define MAXNODE 1971277
+#define MAXNODE 1971277
 #endif
 
 #ifdef bike
-	#define MAXNODE 58227
+#define MAXNODE 58227
 #endif
 
 //#pragma warning(disable:4996)
@@ -34,6 +37,6 @@ int main() {
 #endif
 	p.construct_index();
 	p.create_query();
-	//system("pause");
+	system("pause");
 	return 0;
 }

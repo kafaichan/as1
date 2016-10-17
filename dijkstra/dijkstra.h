@@ -1,10 +1,9 @@
-#pragma once
 #include "edge.h"
 #include "heap.h"
 #include <stdio.h>
 #include <time.h>
 #include <unordered_map>
-using namespace std; 
+using namespace std;
 //#pragma warning(disable:4996)
 
 class Dijkstra {

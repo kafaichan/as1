@@ -5,7 +5,7 @@
 #include "heap.h"
 #include <time.h>
 
-//#pragma warning(disable:4996)
+#pragma warning(disable:4996)
 
 class PLL {
 public:
@@ -16,8 +16,8 @@ public:
 private:
 	FILE* fin;
 	int maxnode;
-	bool* visit; 
-	int* dist; 
+	bool* visit;
+	int* dist;
 	bool* used;
 	Order* orderlist;
 	LabelList* label_in, *label_out;
