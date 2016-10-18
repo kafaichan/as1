@@ -11,9 +11,11 @@
 
 using namespace std;
 #define roadnet
-#define boosttest
+
+#define myheap
 
 #define INF 40000000
+
 
 Dijkstra::Dijkstra(char* filename, int maxnode) {
 	fin = fopen(filename, "r");
@@ -25,6 +27,10 @@ Dijkstra::Dijkstra(char* filename, int maxnode) {
 	this->graph = new EdgeList[maxnode + 1];
 	this->visit = new bool[maxnode + 1];
 	this->dist = new int[maxnode + 1];
+
+#ifdef myheap
+	this->heap = MyHeap();
+#endif
 }
 
 Dijkstra::~Dijkstra() {
@@ -107,7 +113,7 @@ void Dijkstra::create_query()
 		source = (rand() % (maxnode - 0 + 1)) + 0;
 		target = (rand() % (maxnode - 0 + 1)) + 0;
 		//answer_query(source, target);
-		//printf("%d,%d:%d\n", source, target, answer_query(source, target));
+		printf("%d,%d:%d\n", source, target, answer_query(source, target));
 	}
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);
@@ -123,7 +129,7 @@ int Dijkstra::answer_query(int s, int t)
 	visit[s] = true;
 	dist[s] = 0;
 
-#ifndef boosttest
+#ifdef stl
 	priority_queue<HeapNode> pq;
 	HeapNode hnode = HeapNode(s, 0);
 	pq.push(hnode);
@@ -142,7 +148,9 @@ int Dijkstra::answer_query(int s, int t)
 			}
 		}
 	}
-#else
+#endif
+
+#ifdef boosttest
 	boost::heap::fibonacci_heap<HeapNode,boost::heap::compare<decreaseOrderHeapNode> > pq; 
 	HeapNode hnode = HeapNode(s, 0);  
 	pq.push(hnode); 
@@ -158,6 +166,25 @@ int Dijkstra::answer_query(int s, int t)
 				dist[e->end] = dist[top.idx] + e->weight;
 				HeapNode hn = HeapNode(e->end, dist[e->end]);
 				pq.push(hn);
+			}
+		}
+	}
+#endif
+
+#ifdef myheap
+	HeapNode hnode = HeapNode(s, 0);
+	this->heap.insert(hnode); 
+	
+	while (!this->heap.isEmpty()) {
+		HeapNode top = this->heap.getMin(); 
+		visit[top.idx] = true;
+		if (top.idx == t)break;
+		EdgeList elist = this->graph[top.idx]; 
+		for (Edge* e = elist.begin; e != NULL; e = e->next) {
+			if (!visit[e->end] && dist[top.idx] + e->weight < dist[e->end]) {
+				dist[e->end] = dist[top.idx] + e->weight; 
+				HeapNode hn = HeapNode(e->end, dist[e->end]);
+				this->heap.insert(hn);
 			}
 		}
 	}

@@ -37,6 +37,7 @@ int main()
 #ifdef test
 	Dijkstra dijkstra = Dijkstra("test.txt", MAXNODE);
 #endif
+	
 	dijkstra.construct_index();
 	dijkstra.create_query();
 	system("pause");

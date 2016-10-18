@@ -1,10 +1,12 @@
 #include "edge.h"
-#include "heap.h"
+#include "myheap.h"
 #include <stdio.h>
 #include <time.h>
 #include <unordered_map>
 using namespace std;
 //#pragma warning(disable:4996)
+
+#define myheap
 
 class Dijkstra {
 public:
@@ -21,4 +23,8 @@ private:
 	int maxnode;
 	void dropHeader();
 	void timespec_diff(timespec* start, timespec* end, timespec* result);
+
+#ifdef myheap
+	MyHeap heap;
+#endif
 };
