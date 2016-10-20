@@ -4,7 +4,7 @@
 using namespace std;
 
 #pragma warning(disable:4996)
-#define bike 
+#define roadnet 
 
 #include "dijkstra.h"
 
@@ -27,15 +27,15 @@ using namespace std;
 int main()
 {
 #ifdef roadnet
-	Dijkstra dijkstra = Dijkstra("./roadNet-CA.txt", MAXNODE);
+	Dijkstra dijkstra = Dijkstra("../data/roadNet-CA.txt", MAXNODE);
 #endif
 
 #ifdef bike
-	Dijkstra dijkstra = Dijkstra("./Brightkite_edges.txt", MAXNODE);
+	Dijkstra dijkstra = Dijkstra("../data/Brightkite_edges.txt", MAXNODE);
 #endif
 
 #ifdef test
-	Dijkstra dijkstra = Dijkstra("test.txt", MAXNODE);
+	Dijkstra dijkstra = Dijkstra("../data/dijkstra_test.txt", MAXNODE);
 #endif
 	
 	dijkstra.construct_index();

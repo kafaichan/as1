@@ -9,7 +9,7 @@
 #pragma warning(disable:4996)
 
 using namespace std;
-#define bike 
+#define roadnet 
 #define stl
 #define INF 40000000
 
@@ -79,18 +79,29 @@ void Dijkstra::create_query()
 {
 	timespec start, stop, result;
 	timespec_get(&start, TIME_UTC);
-
-	int source, target;
+#ifdef bike
+        FILE* input = fopen("../query/bike_input.txt","r");
+#endif
+#ifdef roadnet
+        FILE* input = fopen("../query/roadnet_input.txt","r");
+#endif
+#ifdef test
+        FILE* input = fopen("../query/test_input.txt","r");
+#endif
+        int source, target;
 	srand(1);
-	for (int i = 0; i < 100; ++i) {
-		source = (rand() % (maxnode - 0 + 1)) + 0;
-		target = (rand() % (maxnode - 0 + 1)) + 0;
-		answer_query(source, target);
-		//printf("%d,%d:%d\n", source, target, answer_query(source, target));
+        char buffer[1024];
+        
+        while(fgets(buffer, 1024, input)){
+            sscanf(buffer, "%d,%d", &source, &target);
+		//answer_query(source, target);
+		printf("%d,%d:%d\n", source, target, answer_query(source, target));
 	}
+        
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);
 	printf("%.9fms\n", ((difftime(result.tv_sec, 0) * 1000000000 + result.tv_nsec) / 1000000.0) / 100.0);
+        fclose(input);
 }
 
 int Dijkstra::answer_query(int s, int t)

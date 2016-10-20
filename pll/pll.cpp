@@ -266,11 +266,22 @@ void PLL::create_query() {
 	int source, target;
 	srand(1);
 
-	for (int i = 0; i < 100; ++i) {
-		source = (rand() % (maxnode - 0 + 1)) + 0;
-		target = (rand() % (maxnode - 0 + 1)) + 0;
-                answer_by_label(source, target);
-		//printf("%d,%d:%d\n", source, target, answer_by_label(source, target));
+#ifdef bike
+        FILE* fin = fopen("../query/bike_input.txt","r");
+#endif
+
+#ifdef roadnet
+        FILE* fin = fopen("../query/roadnet_input.txt","r");
+#endif
+
+#ifdef test
+        FILE* fin = fopen("./query/pll_test_input.txt","r");
+#endif
+        char buffer[1024];
+        while(fgets(buffer,1024,fin)){
+             sscanf(buffer, "%d,%d",&source, &target);
+             //answer_by_label(source, target);
+             printf("%d,%d:%d\n", source, target, answer_by_label(source, target));
 	}
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);

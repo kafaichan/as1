@@ -10,5 +10,5 @@ pll.o: pll.cpp pll.h edge.h heap.h label.h
 
 
 clean:
-	rm *.o
+	rm *.o main
 

@@ -10,5 +10,5 @@ dijkstra.o: dijkstra.cpp dijkstra.h edge.h heap.h
 
 
 clean:
-	rm *.o
+	rm *.o main
 

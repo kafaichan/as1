@@ -25,15 +25,15 @@ using namespace std;
 int main() {
 
 #ifdef test
-	PLL p = PLL("./test.txt", MAXNODE);
+	PLL p = PLL("../data/pll_test.txt", MAXNODE);
 #endif
 
 #ifdef roadnet
-	PLL p = PLL("./roadNet-CA.txt", MAXNODE);
+	PLL p = PLL("../data/roadNet-CA.txt", MAXNODE);
 #endif
 
 #ifdef bike
-	PLL p = PLL("./Brightkite_edges.txt", MAXNODE);
+	PLL p = PLL("../data/Brightkite_edges.txt", MAXNODE);
 #endif
 	p.construct_index();
 	p.create_query();

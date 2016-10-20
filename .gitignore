@@ -1,1 +1,4 @@
-*.o
+dijkstra/*.o
+pll/*.o
+dijkstra/main
+pll/main
