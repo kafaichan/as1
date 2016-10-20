@@ -4,7 +4,7 @@
 using namespace std;
 
 #pragma warning(disable:4996)
-#define roadnet
+#define bike 
 
 #include "dijkstra.h"
 
@@ -40,6 +40,6 @@ int main()
 	
 	dijkstra.construct_index();
 	dijkstra.create_query();
-	system("pause");
+//	system("pause");
 	return 0;
 }

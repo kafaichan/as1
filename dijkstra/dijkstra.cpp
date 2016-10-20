@@ -5,17 +5,13 @@
 #include <time.h>
 #include <queue>
 #include <stdlib.h>
-#include <boost\heap\fibonacci_heap.hpp>
 
 #pragma warning(disable:4996)
 
 using namespace std;
-#define roadnet
-
-#define myheap
-
+#define bike 
+#define stl
 #define INF 40000000
-
 
 Dijkstra::Dijkstra(char* filename, int maxnode) {
 	fin = fopen(filename, "r");
@@ -27,10 +23,6 @@ Dijkstra::Dijkstra(char* filename, int maxnode) {
 	this->graph = new EdgeList[maxnode + 1];
 	this->visit = new bool[maxnode + 1];
 	this->dist = new int[maxnode + 1];
-
-#ifdef myheap
-	this->heap = MyHeap();
-#endif
 }
 
 Dijkstra::~Dijkstra() {
@@ -62,43 +54,25 @@ void Dijkstra::construct_index() {
 #ifdef roadnet
 	dropHeader();
 #endif
-
 	int fromNodeId, toNodeId;
 	while (fgets(buffer, 1024, fin)) {
 		sscanf(buffer, "%d%d", &fromNodeId, &toNodeId);
-
-#ifndef bike
-		Edge* newEdge = new Edge(toNodeId, 1);
-		if (graph[fromNodeId].end != NULL) {
-			graph[fromNodeId].end->next = newEdge;
-			graph[fromNodeId].end = newEdge;
-		}
-		else {
-			graph[fromNodeId].begin = graph[fromNodeId].end = newEdge;
-		}
-#else
-		Edge* newEdge = new Edge(toNodeId, 1);
-		Edge* newEdgeRev = new Edge(fromNodeId, 1);
-		if (graph[fromNodeId].end != NULL) {
-			graph[fromNodeId].end->next = newEdge;
-			graph[fromNodeId].end = newEdge;
-		}
-		else {
-			graph[fromNodeId].begin = graph[fromNodeId].end = newEdge;
-		}
-
-		if (graph[toNodeId].end != NULL) {
-			graph[toNodeId].end->next = newEdgeRev;
-			graph[toNodeId].end = newEdgeRev;
-		}
-		else {
-			graph[toNodeId].begin = graph[toNodeId].end = newEdgeRev;
-		}
-#endif
+                add_edge(fromNodeId,toNodeId,1);
 	}
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);
-	printf("the construct index time: %.6f milliseconds\n", difftime(result.tv_sec, 0) * 1000 + result.tv_nsec / 1000000.0);
+	printf("%.9fms\n", (difftime(result.tv_sec, 0) * 1000000000 + result.tv_nsec) / 1000000.0);
+}
+
+void Dijkstra::add_edge(int from, int to, int weight)
+{
+    Edge* e = new Edge(to, weight);
+    if(graph[from].end != NULL){
+        graph[from].end->next = e;
+        graph[from].end = e;
+    }else{
+        graph[from].begin = graph[from].end = e;
+    }
 }
 
 void Dijkstra::create_query()
@@ -108,16 +82,15 @@ void Dijkstra::create_query()
 
 	int source, target;
 	srand(1);
-
 	for (int i = 0; i < 100; ++i) {
 		source = (rand() % (maxnode - 0 + 1)) + 0;
 		target = (rand() % (maxnode - 0 + 1)) + 0;
-		//answer_query(source, target);
-		printf("%d,%d:%d\n", source, target, answer_query(source, target));
+		answer_query(source, target);
+		//printf("%d,%d:%d\n", source, target, answer_query(source, target));
 	}
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);
-	printf("the average query time in 100 queries: %.6f milliseconds\n", (difftime(result.tv_sec, 0) * 1000 + result.tv_nsec / 1000000.0) / 100.0);
+	printf("%.9fms\n", ((difftime(result.tv_sec, 0) * 1000000000 + result.tv_nsec) / 1000000.0) / 100.0);
 }
 
 int Dijkstra::answer_query(int s, int t)
@@ -131,9 +104,17 @@ int Dijkstra::answer_query(int s, int t)
 
 #ifdef stl
 	priority_queue<HeapNode> pq;
+#endif
+#ifdef boostfib        
+	boost::heap::fibonacci_heap<HeapNode,boost::heap::compare<decreaseOrderHeapNode> > pq;
+#endif
+
+#ifdef boostpq
+       boost::heap::priority_queue<HeapNode,boost::heap::compare<decreaseOrderHeapNode> > pq;
+#endif
+
 	HeapNode hnode = HeapNode(s, 0);
 	pq.push(hnode);
-
 	while (!pq.empty()) {
 		HeapNode top = pq.top();
 		pq.pop();
@@ -148,47 +129,6 @@ int Dijkstra::answer_query(int s, int t)
 			}
 		}
 	}
-#endif
-
-#ifdef boosttest
-	boost::heap::fibonacci_heap<HeapNode,boost::heap::compare<decreaseOrderHeapNode> > pq; 
-	HeapNode hnode = HeapNode(s, 0);  
-	pq.push(hnode); 
-
-	while (!pq.empty()) {
-		HeapNode top = pq.top();
-		pq.pop();
-		visit[top.idx] = true;
-		if (top.idx == t)break;
-		EdgeList elist = this->graph[top.idx];
-		for (Edge* e = elist.begin; e != NULL; e = e->next) {
-			if (!visit[e->end] && dist[top.idx] + e->weight < dist[e->end]) {
-				dist[e->end] = dist[top.idx] + e->weight;
-				HeapNode hn = HeapNode(e->end, dist[e->end]);
-				pq.push(hn);
-			}
-		}
-	}
-#endif
-
-#ifdef myheap
-	HeapNode hnode = HeapNode(s, 0);
-	this->heap.insert(hnode); 
-	
-	while (!this->heap.isEmpty()) {
-		HeapNode top = this->heap.getMin(); 
-		visit[top.idx] = true;
-		if (top.idx == t)break;
-		EdgeList elist = this->graph[top.idx]; 
-		for (Edge* e = elist.begin; e != NULL; e = e->next) {
-			if (!visit[e->end] && dist[top.idx] + e->weight < dist[e->end]) {
-				dist[e->end] = dist[top.idx] + e->weight; 
-				HeapNode hn = HeapNode(e->end, dist[e->end]);
-				this->heap.insert(hn);
-			}
-		}
-	}
-#endif
 	return dist[t];
 }
 

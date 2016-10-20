@@ -1,8 +1,8 @@
 #pragma once
 
-#define myheap
+#define stl 
 
-#ifndef boosttest
+#ifdef stl
 class HeapNode {
 public:
 	int idx, key;
@@ -14,57 +14,7 @@ public:
 };
 #endif
 
-#ifdef myheap
-#define MAXHEAPSIZE 6000000
-class HeapNode {
-public:
-	int idx, key;
-	HeapNode() {
-		idx = key = 0;
-	}
-	HeapNode(int idx, int key) {
-		this->idx = idx;
-		this->key = key;
-	}
-
-	HeapNode(const HeapNode& hp) {
-		idx = hp.idx; 
-		key = hp.key;
-	}
-};
-
-class Heap {
-public:
-	Heap(int size) {
-		heap = new HeapNode[size];
-		hcnt = 0;
-	}
-	Heap() {
-		heap = new HeapNode[MAXHEAPSIZE+1];
-		hcnt = 0;
-	}
-
-	~Heap() {
-		if (heap != NULL)delete[] heap;
-	}
-
-	void insert(HeapNode& hp) {
-		int idx = ++hcnt;
-		
-	}
-
-	bool isEmpty() {
-		return hcnt > 0;
-	}
-
-	HeapNode& getMin() {
-
-	}
-private:
-	HeapNode* heap;
-	int hcnt;
-};
-#else
+#ifdef boosttest
 class HeapNode {
 public:
 	int idx, key; 

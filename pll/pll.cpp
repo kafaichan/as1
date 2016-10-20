@@ -5,14 +5,14 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
-#include <boost\heap\fibonacci_heap.hpp>
-#include <boost\container\vector.hpp>
+//#include <boost\heap\fibonacci_heap.hpp>
+//#include <boost\container\vector.hpp>
 using namespace std;
 
 #define INF 40000000
-#define roadnet
+#define bike 
 
-#define boosttest
+//#define boosttest
 
 PLL::PLL(char* filename, int maxnode) {
 	fin = fopen(filename, "r");
@@ -35,7 +35,7 @@ PLL::PLL(char* filename, int maxnode) {
 		visit[i] = false;
 		dist[i] = INF;
 		used[i] = false;
-		label_out[i].begin = label_out[i].end = label_in[i].begin = label_in[i].end = NULL;
+		//label_out[i].begin = label_out[i].end = label_in[i].begin = label_in[i].end = NULL;
 	}
 }
 
@@ -70,7 +70,7 @@ void PLL::construct_index() {
 
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);
-	printf("the construct index time: %.6f milliseconds\n", difftime(result.tv_sec, 0) * 1000 + result.tv_nsec / 1000000.0);
+	printf("%.9fms\n", (difftime(result.tv_sec, 0) * 1000000000 + result.tv_nsec) / 1000000.0);
 }
 
 void PLL::construct_label_in(EdgeList* g, int s, int iter) {
@@ -112,7 +112,7 @@ void PLL::construct_label_in(EdgeList* g, int s, int iter) {
 
 	//do the initializaton again
 #ifndef boosttest
-	vector<int>::iterator::iterator it;
+	vector<int>::iterator it;
 #else
 	boost::container::vector<int>::iterator it;
 #endif
@@ -161,7 +161,7 @@ void PLL::construct_label_out(EdgeList * g, int s, int iter)
 
 	//do the initializaton again
 #ifndef boosttest
-		vector<int>::iterator::iterator it;
+		vector<int>::iterator it;
 #else
 		boost::container::vector<int>::iterator it;
 #endif
@@ -183,7 +183,6 @@ void PLL::construct_labels() {
 	orderlist[7].idx = 0;
 #endif
 	for (int i = 0; i < maxnode + 1; ++i) {
-		//printf("%d\n", i);
 		int idx = orderlist[i].idx;
 		construct_label_in(graph, idx, i);
 		construct_label_out(reverse_graph, idx, i);
@@ -270,11 +269,12 @@ void PLL::create_query() {
 	for (int i = 0; i < 100; ++i) {
 		source = (rand() % (maxnode - 0 + 1)) + 0;
 		target = (rand() % (maxnode - 0 + 1)) + 0;
-		printf("%d,%d:%d\n", source, target, answer_by_label(source, target));
+                answer_by_label(source, target);
+		//printf("%d,%d:%d\n", source, target, answer_by_label(source, target));
 	}
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);
-	printf("the average query time in 100 queries: %.6f milliseconds\n", (difftime(result.tv_sec, 0) * 1000 + result.tv_nsec / 1000000.0) / 100.0);
+	printf("%.9fms\n", ((difftime(result.tv_sec, 0) * 1000000000 + result.tv_nsec) / 1000000.0) / 100.0);
 }
 
 

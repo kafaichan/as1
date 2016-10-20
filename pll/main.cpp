@@ -4,7 +4,7 @@
 using namespace std;
 #include "pll.h"
 
-#define roadnet
+#define bike 
 
 #pragma warning(disable:4996)
 
@@ -37,6 +37,6 @@ int main() {
 #endif
 	p.construct_index();
 	p.create_query();
-	system("pause");
+	//system("pause");
 	return 0;
 }
