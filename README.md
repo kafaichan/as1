@@ -19,7 +19,7 @@ In order to run a specific network, you need to do:
       
       (c)uncomment the #include lines in dijkstra.h
       
-      (d)add -I XX/boost_1_62_0(YOUR BOOST library root folder path) options to Makefile dijkstra.o
+      (d)add -I XX/boost_1_62_0(YOUR BOOST library root folder path) options to Makefile dijkstra.o part
 
 
 => pll Folder
@@ -27,7 +27,8 @@ In order to run a specific network, you need to do:
     (2) edit pll.cpp, #define one of them: roadnet/bike/test
     (3) if you use boost library,
         (a) #define boosttest in pll.cpp
-        (b) uncomment the #include lines in pll.cpp, currently only support fibonacci heap, you can reference the dijkstra.cpp to edit the code in            order to use boost priority queue
+        (b) uncomment the #include lines in pll.cpp, currently only support fibonacci heap, you can reference the 
+            dijkstra.cpp to edit the code in order to use boost priority queue
         (c) #define boosttest in heap.h
 
     (4)same as Dijkstra 4(d) part 
