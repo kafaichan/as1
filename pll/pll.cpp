@@ -264,7 +264,6 @@ void PLL::create_query() {
 	timespec_get(&start, TIME_UTC);
 
 	int source, target;
-	srand(1);
 
 #ifdef bike
         FILE* fin = fopen("../query/bike_input.txt","r");
