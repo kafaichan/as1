@@ -19,7 +19,7 @@ In order to run a specific network, you need to do:
       
       (c)uncomment the #include lines in dijkstra.h
       
-      (d)add -I XX/boost_1_62_0(YOUR BOOST library root folder path) options to Makefile dijkstra.o part
+      (d)add -I XX/boost_1_62_0(YOUR BOOST library root folder path) options to Makefile dijkstra.o part's command line
 
 
 => pll Folder
@@ -36,5 +36,4 @@ In order to run a specific network, you need to do:
       (c)uncomment the #include lines in pll.h
       
       (d)add -I XX/boost_1_62_0(YOUR BOOST library root folder path) options to Makefile pll.o part
-
 
