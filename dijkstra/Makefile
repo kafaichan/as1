@@ -6,7 +6,7 @@ main.o: main.cpp dijkstra.h edge.h heap.h
 	g++ -std=c++11 -c main.cpp -o main.o -g -O3 
 
 dijkstra.o: dijkstra.cpp dijkstra.h edge.h heap.h
-	g++ -I /home/kafaichan/Downloads/boost_1_62_0 -std=c++11 -c dijkstra.cpp -o dijkstra.o -g -O3 
+	g++ -std=c++11 -c dijkstra.cpp -o dijkstra.o -g -O3 
 
 
 clean:

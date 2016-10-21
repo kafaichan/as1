@@ -5,14 +5,11 @@
 #include <queue>
 #include <vector>
 #include <algorithm>
-//#include <boost\heap\fibonacci_heap.hpp>
-//#include <boost\container\vector.hpp>
 using namespace std;
 
 #define INF 40000000
 #define bike 
-
-//#define boosttest
+#define stl 
 
 PLL::PLL(char* filename, int maxnode) {
 	fin = fopen(filename, "r");
@@ -74,13 +71,20 @@ void PLL::construct_index() {
 }
 
 void PLL::construct_label_in(EdgeList* g, int s, int iter) {
-#ifndef boosttest
+#ifdef stl 
 	vector<int> visit_idx;  //avoid o(n) time initiliazation
 	priority_queue<HeapNode> pq;
-#else
+#endif
+
+#ifdef boostfib
 	boost::heap::fibonacci_heap<HeapNode, boost::heap::compare<decreaseHeapNode> > pq;
 	boost::container::vector<int> visit_idx;
 #endif
+
+#ifdef boostpq
+        boost::heap::priority_queue<HeapNode, boost::heap::compare<decreaseHeapNode> > pq;
+        boost::container::vector<int> visit_idx; 
+#endif 
 	//visit[s] = true;
 	dist[s] = 0;
 	HeapNode hnode = HeapNode(s, 0);
@@ -111,7 +115,7 @@ void PLL::construct_label_in(EdgeList* g, int s, int iter) {
 	}
 
 	//do the initializaton again
-#ifndef boosttest
+#ifdef stl
 	vector<int>::iterator it;
 #else
 	boost::container::vector<int>::iterator it;
@@ -124,12 +128,19 @@ void PLL::construct_label_in(EdgeList* g, int s, int iter) {
 
 void PLL::construct_label_out(EdgeList * g, int s, int iter)
 {
-#ifndef boosttest
+#ifdef stl
 	vector<int> visit_idx;  //avoid o(n) time initiliazation
 	priority_queue<HeapNode> pq;
-#else
+#endif
+
+#ifdef boostfib
 	boost::heap::fibonacci_heap<HeapNode, boost::heap::compare<decreaseHeapNode> > pq;
 	boost::container::vector<int> visit_idx;
+#endif
+
+#ifdef boostpq
+        boost::heap::priority_queue<HeapNode, boost::heap::compare<decreaseHeapNode> > pq;
+        boost::container::vector<int> visit_idx;
 #endif
 	dist[s] = 0;
 	HeapNode hnode = HeapNode(s, 0);
@@ -160,7 +171,7 @@ void PLL::construct_label_out(EdgeList * g, int s, int iter)
 	}
 
 	//do the initializaton again
-#ifndef boosttest
+#ifdef stl
 		vector<int>::iterator it;
 #else
 		boost::container::vector<int>::iterator it;
@@ -279,8 +290,8 @@ void PLL::create_query() {
         char buffer[1024];
         while(fgets(buffer,1024,fin)){
              sscanf(buffer, "%d,%d",&source, &target);
-             //answer_by_label(source, target);
-             printf("%d,%d:%d\n", source, target, answer_by_label(source, target));
+             answer_by_label(source, target);
+             //printf("%d,%d:%d\n", source, target, answer_by_label(source, target));
 	}
 	timespec_get(&stop, TIME_UTC);
 	timespec_diff(&start, &stop, &result);

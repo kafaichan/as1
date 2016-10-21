@@ -9,8 +9,8 @@
 #pragma warning(disable:4996)
 
 using namespace std;
-#define roadnet 
-#define stl
+#define bike 
+#define stl 
 #define INF 40000000
 
 Dijkstra::Dijkstra(char* filename, int maxnode) {

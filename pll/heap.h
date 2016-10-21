@@ -1,8 +1,8 @@
 #pragma once
 
-//#define boosttest
+#define stl 
 
-#ifndef boosttest
+#ifdef stl 
 class HeapNode {
 public:
 	int idx, key;
@@ -12,7 +12,9 @@ public:
 		return this->key > a.key;
 	}
 };
-#else
+#endif
+
+#ifdef boosttest
 class HeapNode {
 public:
 	int idx, key; 

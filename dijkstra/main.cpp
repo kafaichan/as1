@@ -4,7 +4,7 @@
 using namespace std;
 
 #pragma warning(disable:4996)
-#define roadnet 
+#define bike 
 
 #include "dijkstra.h"
 
